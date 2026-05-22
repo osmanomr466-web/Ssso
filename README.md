@@ -1,2 +1,2 @@
-ssssss# Ssso
+Ssso
 Ofk
