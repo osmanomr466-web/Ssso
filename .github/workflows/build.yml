@@ -6,10 +6,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Prepare Structure
+      - name: Create Structure
         run: |
           mkdir -p app/src/main/java/com/iapp/maker
           if [ -f MainActivity.java ]; then mv MainActivity.java app/src/main/java/com/iapp/maker/MainActivity.java; fi
+          echo "rootProject.name = 'Ssso'" > settings.gradle
+          echo "include ':app'" >> settings.gradle
           echo "plugins { id 'com.android.application' version '8.0.0' apply false }" > build.gradle
           echo "plugins { id 'com.android.application' } android { namespace 'com.iapp.maker'; compileSdk 33; defaultConfig { applicationId 'com.iapp.maker'; minSdk 21; targetSdk 33 } }" > app/build.gradle
           
@@ -19,7 +21,6 @@ jobs:
         
       - name: Build with Gradle
         run: |
-          chmod +x gradlew || gradle wrapper
           ./gradlew assembleDebug --info
           
       - name: Upload APK
