@@ -8,14 +8,15 @@ jobs:
       
       - name: Create Structure
         run: |
-          # 1. إنشاء المجلدات تلقائياً
-          mkdir -p app/src/main/java/com/iapp/maker/
-          # 2. تحريك الملف الرئيسي إلى مكانه الصحيح إذا كان في المجلد الرئيسي
+          # إنشاء الهيكل الأساسي الذي يتطلبه أندرويد
+          mkdir -p app/src/main/java/com/iapp/maker
+          # تحريك الملف إذا كان في المجلد الرئيسي
           if [ -f MainActivity.java ]; then mv MainActivity.java app/src/main/java/com/iapp/maker/MainActivity.java; fi
-          # 3. إنشاء ملفات الضبط إذا لم تكن موجودة
-          if [ ! -f app/build.gradle ]; then
-            echo "plugins { id 'com.android.application' } android { namespace 'com.iapp.maker'; compileSdk 33; defaultConfig { applicationId 'com.iapp.maker'; minSdk 21; targetSdk 33 } }" > app/build.gradle
-          fi
+          # إنشاء ملفات الإعدادات الضرورية
+          echo "plugins { id 'com.android.application' version '8.0.0' apply false }" > build.gradle
+          echo "plugins { id 'com.android.application' } android { namespace 'com.iapp.maker'; compileSdk 33; defaultConfig { applicationId 'com.iapp.maker'; minSdk 21; targetSdk 33 } }" > app/build.gradle
+          # إنشاء ملف AndroidManifest بسيط
+          echo '<manifest package="com.iapp.maker"><application /></manifest>' > app/src/main/AndroidManifest.xml
           
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -25,8 +26,8 @@ jobs:
         run: |
           gradle wrapper
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
           
-      - name: Upload APK
+      - name: Upload
         uses: actions/upload-artifact@v4
         with: { name: app-debug, path: app/build/outputs/apk/debug/app-debug.apk }
